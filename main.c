@@ -1,33 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ctelma <ctelma@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/09/13 16:29:35 by ctelma            #+#    #+#             */
-/*   Updated: 2019/09/15 18:26:59 by ctelma           ###   ########.fr       */
+/*   Created: 2019/09/15 18:50:47 by ctelma            #+#    #+#             */
+/*   Updated: 2019/09/15 18:53:16 by ctelma           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#include "get_next_line.h"
 
-# include "libft/libft.h"
-
-# include <fcntl.h>
-
-# define BUFF_SIZE 32
-
-typedef struct	s_node t_node;
-
-struct	s_node
+int 	main(void)
 {
-	char	*s;
-	int 	fd;
-	t_node	*next;
-};
-
-int		get_next_line(const int fd, char **line);
-
-#endif
+	ft_putstr_fd("Hello World", 1);
+	return (0);
+}
