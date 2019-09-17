@@ -15,22 +15,40 @@
 int get_next_line(const int fd, char **line)
 {
 	static t_node *node;
-	char s[BUFF_SIZE + 1];
+	char *s;
 	int id;
-	int i;
 
-	i = 0;
+	s = (char*)malloc(sizeof(char) * BUFF_SIZE + 1);
 	node = (t_node*)malloc(sizeof(t_node));
+	node->fd = fd;
+	node->s = NULL;
 	while ((id = read(fd, s, BUFF_SIZE)))
 	{
-		s[id] = '\0';
-		ft_putstr(s);
+        s[id] = '\0';
+	    if (!node->s)
+	        node->s = ft_strdup(s);
+	    else
+	        node->s = ft_strjoin(node->s, s);
 	}
 	*line = node->s;
 	return (0);
 }
 
-int		ft_output(char *str)
+static char     *check_end(t_node *node)
+{
+    size_t i;
+
+    i = 0;
+    while (node->s[i])
+    {
+        if (node->s[i] == '\n')
+            break;
+        i++;
+    }
+    return (ft_strsub(node->s, 0, i));
+}
+
+/*int		ft_output(char *str)
 {
 	int		fd;
 	char	buf[BUFF_SIZE + 1];
@@ -53,17 +71,15 @@ int		ft_output(char *str)
 		return (1);
 	}
 	return (fd);
-}
+}*/
 
 int main(void)
 {
 	int fd;
 	char *line;
 
-	//fd = ft_output("author");
-	//if (get_next_line(fd, &line) == 0)
-		//ft_putendl(line);
 	fd = open("author", O_RDONLY);
-	ft_putnbr(get_next_line(fd, &line));
+	if (get_next_line(fd, &line) == 0)
+	    ft_putstr(line);
 	return (0);
 }
