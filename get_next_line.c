@@ -12,6 +12,20 @@
 
 #include "get_next_line.h"
 
+
+static char     *check_end(t_node *node)
+{
+	size_t i;
+	char *s;
+
+	i =0;
+	while (node->s[i] != '\n')
+		i++;
+	s = (char*)malloc(sizeof(char) * (i + 1));
+	s = ft_strsub(node->s, 0, i);
+	return (s);
+}
+
 int get_next_line(const int fd, char **line)
 {
 	static t_node *node;
@@ -28,24 +42,10 @@ int get_next_line(const int fd, char **line)
 	    if (!node->s)
 	        node->s = ft_strdup(s);
 	    else
-	        node->s = ft_strjoin(node->s, s);
+	    	node->s = ft_strjoin(node->s, s);
 	}
-	*line = node->s;
+	*line = check_end(node);
 	return (0);
-}
-
-static char     *check_end(t_node *node)
-{
-    size_t i;
-
-    i = 0;
-    while (node->s[i])
-    {
-        if (node->s[i] == '\n')
-            break;
-        i++;
-    }
-    return (ft_strsub(node->s, 0, i));
 }
 
 /*int		ft_output(char *str)
