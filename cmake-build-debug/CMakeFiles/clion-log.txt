@@ -1,4 +1,4 @@
-/root/Downloads/clion-2019.2.2/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /root/Desktop/GitHub/get_next_line
+/Users/ctelma/Desktop/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/ctelma/Desktop/Projects/gnl
 -- Configuring done
 -- Generating done
--- Build files have been written to: /root/Desktop/GitHub/get_next_line/cmake-build-debug
+-- Build files have been written to: /Users/ctelma/Desktop/Projects/gnl/cmake-build-debug

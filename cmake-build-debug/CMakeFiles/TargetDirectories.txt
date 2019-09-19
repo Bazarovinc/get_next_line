@@ -1,3 +1,3 @@
-/root/Desktop/GitHub/get_next_line/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/root/Desktop/GitHub/get_next_line/cmake-build-debug/CMakeFiles/main.dir
-/root/Desktop/GitHub/get_next_line/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/ctelma/Desktop/Projects/gnl/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/ctelma/Desktop/Projects/gnl/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/ctelma/Desktop/Projects/gnl/cmake-build-debug/CMakeFiles/main.dir

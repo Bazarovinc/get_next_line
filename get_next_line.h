@@ -6,7 +6,7 @@
 /*   By: ctelma <ctelma@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/13 16:29:35 by ctelma            #+#    #+#             */
-/*   Updated: 2019/09/15 18:26:59 by ctelma           ###   ########.fr       */
+/*   Updated: 2019/09/19 14:48:56 by ctelma           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 # include <fcntl.h>
 
-# define BUFF_SIZE 2
+# define BUFF_SIZE 32
 
 typedef struct	s_node t_node;
 
