@@ -124,5 +124,7 @@ int main(void)
 	//fd = open("test", O_RDONLY);
 	if (get_next_line(fd, &line1) == 1)
 		ft_putstr(line1);
+	if (get_next_line(fd, &line1) == 1)
+		ft_putstr(line1);
 	return (0);
 }

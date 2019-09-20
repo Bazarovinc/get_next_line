@@ -17,7 +17,7 @@
 
 # include <fcntl.h>
 
-# define BUFF_SIZE 32
+# define BUFF_SIZE 2
 
 typedef struct	s_node t_node;
 
