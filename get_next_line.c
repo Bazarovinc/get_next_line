@@ -6,36 +6,39 @@
 /*   By: ctelma <ctelma@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/13 16:28:52 by ctelma            #+#    #+#             */
-/*   Updated: 2019/09/19 19:29:56 by ctelma           ###   ########.fr       */
+/*   Updated: 2019/09/22 21:39:09 by ctelma           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static void		create_elements(int fd, t_node **node, char **s)
+static void	create_elements(int fd, t_node **node, char **s)
 {
 	*s = (char*)malloc(sizeof(char) * BUFF_SIZE + 1);
-	*node = (t_node*)malloc(sizeof(t_node));
 	if (!(*node)->fd)
 	{
 		(*node)->fd = fd;
 		(*node)->s = NULL;
+		(*node)->next = NULL;
 	}
 	else if ((*node)->fd != fd)
 	{
-		while ((*node)->next)
+		while (*node)
 		{
 			*node = (*node)->next;
-			if ((*node)->fd == fd)
-				break;
+			if (!*node)
+				*node = (t_node*)malloc(sizeof(t_node));
+			if (!(*node)->fd && !(*node)->s)
+			{
+				(*node)->fd = fd;
+				(*node)->s = NULL;
+				(*node)->next = NULL;
+			}
 		}
-		*node = (*node)->next;
-		(*node)->fd = fd;
-		(*node)->s = NULL;
 	}
 }
 
-static int 		if_end(char *s)
+static int	if_end(char *s)
 {
 	size_t i;
 
@@ -49,7 +52,7 @@ static int 		if_end(char *s)
 	return (0);
 }
 
-static void		push_string(t_node **n, char *s, int flag)
+static int	push_string(t_node **n, char *s, int flag)
 {
 	char *str;
 
@@ -60,71 +63,93 @@ static void		push_string(t_node **n, char *s, int flag)
 		else
 			str = ft_strjoin((*n)->s, s);
 	}
-	else if (flag == 2)
+	else if (s != NULL)
 		str = ft_strdup(s);
-	free((*n)->s);
-	(*n)->s = str;
+	if (s == NULL)
+	{
+		free((*n)->s);
+		(*n)->s = NULL;
+	}
+	else
+	{
+		free((*n)->s);
+		(*n)->s = str;
+		if (if_end(s) == 1 && flag == 1)
+			return (1);
+	}
+	return (0);
 }
 
-static char     *check_end(t_node *node)
+static char	*check_end(t_node *node)
 {
 	size_t	i;
-	char 	*s;
+	char	*s;
 
-	i =0;
+	i = 0;
+	s = NULL;
 	while (node->s[i] != '\n')
 		i++;
-	s = ft_strsub(node->s, 0, i);
-	push_string(&node, node->s + (i + 1), 2);
+	if (i != 0)
+		s = ft_strsub(node->s, 0, i);
+	if (node->s[i + 1] == '\0' || !s)
+		push_string(&node, NULL, 2);
+	else
+		push_string(&node, node->s + (i + 1), 2);
 	return (s);
 }
 
-int				get_next_line(const int fd, char **line)
+int			get_next_line(const int fd, char **line)
 {
 	static t_node	*node;
 	t_node			*n;
 	char			*s;
 	int				id;
+	int 			ch;
 
+	if (fd == -1)
+		return (-1);
+	if (!node)
+		node = (t_node*)malloc(sizeof(t_node));
 	n = node;
 	create_elements(fd, &n, &s);
 	while ((id = read(fd, s, BUFF_SIZE)))
 	{
-        s[id] = '\0';
-		if (if_end(s) == 1)
-		{
-			push_string(&n, s, 1);
-			break;
-		}
-		else
-	    	push_string(&n, s, 1);
+		s[id] = '\0';
+		if (push_string(&n, s, 1) == 1)
+			break ;
 	}
-	*line = check_end(n);
+	if (n->s)
+	{
+		*line = check_end(n);
+		ch = 1;
+	}
+	else if (!n->s && id - 1 < BUFF_SIZE)
+		ch = 0;
 	free(s);
-	return (1);
+	return (ch);
 }
 
-int main(void)
-{
+int main(void) {
 	int fd;
+	int fd1;
 	char *line;
 	char *line1;
 
-	/*fd = open("author", O_RDONLY);
-	if (get_next_line(fd, &line) == 1)
-	    ft_putstr(line);
-	ft_putchar('\n');
-	if (get_next_line(fd, &line) == 1)
-		ft_putstr(line);
-	ft_putchar('\n');*/
 	fd = open("test", O_RDONLY);
-	if (get_next_line(fd, &line1) == 1)
+	if (get_next_line(fd, &line) < 2)
+	 	ft_putstr(line);
+	ft_putchar('\n');
+	if (get_next_line(fd, &line) < 2)
+		ft_putstr(line);
+	ft_putchar('\n');
+	if (get_next_line(fd, &line) < 2)
+		ft_putstr(line);
+	/*fd1 = open("author", O_RDONLY);
+	if (get_next_line(fd1, &line1) == 1)
 		ft_putstr(line1);
 	ft_putchar('\n');
-	//fd = open("test", O_RDONLY);
-	if (get_next_line(fd, &line1) == 1)
+	if (get_next_line(fd1, &line1) == 1)
 		ft_putstr(line1);
-	if (get_next_line(fd, &line1) == 1)
-		ft_putstr(line1);
+	ft_putchar('\n');*/
 	return (0);
 }
