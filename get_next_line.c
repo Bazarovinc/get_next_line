@@ -5,54 +5,35 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ctelma <ctelma@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/09/13 16:28:52 by ctelma            #+#    #+#             */
-/*   Updated: 2019/09/22 21:39:09 by ctelma           ###   ########.fr       */
+/*   Created: 2019/09/23 11:47:54 by ctelma            #+#    #+#             */
+/*   Updated: 2019/09/23 19:07:49 by ctelma           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static void	create_elements(int fd, t_node **node, char **s)
+static t_node	*find_elem(int fd, t_node **node)
 {
-	*s = (char*)malloc(sizeof(char) * BUFF_SIZE + 1);
-	if (!(*node)->fd)
+	t_node *cur;
+	t_node *new;
+
+	cur = *node;
+	while (cur)
 	{
-		(*node)->fd = fd;
-		(*node)->s = NULL;
-		(*node)->next = NULL;
+		if (cur->fd == fd)
+			return (cur);
+		cur = cur->next;
 	}
-	else if ((*node)->fd != fd)
-	{
-		while (*node)
-		{
-			*node = (*node)->next;
-			if (!*node)
-				*node = (t_node*)malloc(sizeof(t_node));
-			if (!(*node)->fd && !(*node)->s)
-			{
-				(*node)->fd = fd;
-				(*node)->s = NULL;
-				(*node)->next = NULL;
-			}
-		}
-	}
+	if (!(new = (t_node*)malloc(sizeof(t_node))))
+		return (NULL);
+	new->fd = fd;
+	new->s = NULL;
+	new->next = *node;
+	*node = new;
+	return (new);
 }
 
-static int	if_end(char *s)
-{
-	size_t i;
-
-	i = 0;
-	while (s[i])
-	{
-		if (s[i] == '\n')
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-static int	push_string(t_node **n, char *s, int flag)
+static int		push_string(t_node **n, char *s, int flag)
 {
 	char *str;
 
@@ -74,44 +55,41 @@ static int	push_string(t_node **n, char *s, int flag)
 	{
 		free((*n)->s);
 		(*n)->s = str;
-		if (if_end(s) == 1 && flag == 1)
+		if (ft_strchr(s, '\n') != 0)
 			return (1);
 	}
 	return (0);
 }
 
-static char	*check_end(t_node *node)
+static char		*check_end(t_node *node)
 {
 	size_t	i;
 	char	*s;
 
 	i = 0;
 	s = NULL;
-	while (node->s[i] != '\n')
+	while (node->s[i] != '\n' && node->s[i] != '\0')
 		i++;
 	if (i != 0)
 		s = ft_strsub(node->s, 0, i);
-	if (node->s[i + 1] == '\0' || !s)
+	if (node->s[i + 1] == '\0' || !s || node->s[i] == '\0')
 		push_string(&node, NULL, 2);
 	else
 		push_string(&node, node->s + (i + 1), 2);
 	return (s);
 }
 
-int			get_next_line(const int fd, char **line)
+int				get_next_line(const int fd, char **line)
 {
 	static t_node	*node;
 	t_node			*n;
-	char			*s;
+	char			s[BUFF_SIZE + 1];
 	int				id;
-	int 			ch;
+	int				ch;
 
-	if (fd == -1)
+	if (fd < 0 || BUFF_SIZE < 1 || !line || read(fd, NULL, 0) < 0)
 		return (-1);
-	if (!node)
-		node = (t_node*)malloc(sizeof(t_node));
-	n = node;
-	create_elements(fd, &n, &s);
+	n = find_elem(fd, &node);
 	while ((id = read(fd, s, BUFF_SIZE)))
 	{
 		s[id] = '\0';
@@ -123,33 +101,36 @@ int			get_next_line(const int fd, char **line)
 		*line = check_end(n);
 		ch = 1;
 	}
-	else if (!n->s && id - 1 < BUFF_SIZE)
+	if (!*line && !(n->s) && id == 0 && ch != 1)
 		ch = 0;
-	free(s);
 	return (ch);
 }
 
-int main(void) {
+
+int		main(void)
+{
 	int fd;
 	int fd1;
-	char *line;
-	char *line1;
+	char *s;
+	int id;
 
-	fd = open("test", O_RDONLY);
-	if (get_next_line(fd, &line) < 2)
-	 	ft_putstr(line);
+	fd = open("test", O_WRONLY);
+	fd1 = open("test", O_RDONLY);
+	write(fd, "abc\n\n", 5);
+	id = get_next_line(fd1, &s);
+	ft_putendl(s);
+	ft_putnbr(id);
 	ft_putchar('\n');
-	if (get_next_line(fd, &line) < 2)
-		ft_putstr(line);
+	id = get_next_line(fd1, &s);
+	ft_putendl(s);
+	ft_putnbr(id);
 	ft_putchar('\n');
-	if (get_next_line(fd, &line) < 2)
-		ft_putstr(line);
-	/*fd1 = open("author", O_RDONLY);
-	if (get_next_line(fd1, &line1) == 1)
-		ft_putstr(line1);
+	id = get_next_line(fd1, &s);
+	ft_putendl(s);
+	ft_putnbr(id);
+	id = get_next_line(fd1, &s);
+	ft_putendl(s);
+	ft_putnbr(id);
 	ft_putchar('\n');
-	if (get_next_line(fd1, &line1) == 1)
-		ft_putstr(line1);
-	ft_putchar('\n');*/
-	return (0);
+
 }
