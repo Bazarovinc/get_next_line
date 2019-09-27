@@ -6,7 +6,7 @@
 /*   By: ctelma <ctelma@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/23 11:47:54 by ctelma            #+#    #+#             */
-/*   Updated: 2019/09/23 19:07:49 by ctelma           ###   ########.fr       */
+/*   Updated: 2019/09/27 19:45:45 by ctelma           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,16 @@ static int		push_string(t_node **n, char *s, int flag)
 	return (0);
 }
 
+
+static int 		check_func(int ch)
+{
+	if (ch == 3)
+		ch = 0;
+	else if (ch == 0)
+		ch = 1;
+	return (ch);
+}
+
 static char		*check_end(t_node *node)
 {
 	size_t	i;
@@ -87,6 +97,7 @@ int				get_next_line(const int fd, char **line)
 	int				id;
 	int				ch;
 
+	ch = 3;
 	if (fd < 0 || BUFF_SIZE < 1 || !line || read(fd, NULL, 0) < 0)
 		return (-1);
 	n = find_elem(fd, &node);
@@ -99,38 +110,8 @@ int				get_next_line(const int fd, char **line)
 	if (n->s)
 	{
 		*line = check_end(n);
-		ch = 1;
+		ch = check_func(ch);
 	}
-	if (!*line && !(n->s) && id == 0 && ch != 1)
-		ch = 0;
+	ch = check_func(ch);
 	return (ch);
-}
-
-
-int		main(void)
-{
-	int fd;
-	int fd1;
-	char *s;
-	int id;
-
-	fd = open("test", O_WRONLY);
-	fd1 = open("test", O_RDONLY);
-	write(fd, "abc\n\n", 5);
-	id = get_next_line(fd1, &s);
-	ft_putendl(s);
-	ft_putnbr(id);
-	ft_putchar('\n');
-	id = get_next_line(fd1, &s);
-	ft_putendl(s);
-	ft_putnbr(id);
-	ft_putchar('\n');
-	id = get_next_line(fd1, &s);
-	ft_putendl(s);
-	ft_putnbr(id);
-	id = get_next_line(fd1, &s);
-	ft_putendl(s);
-	ft_putnbr(id);
-	ft_putchar('\n');
-
 }
